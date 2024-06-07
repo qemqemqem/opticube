@@ -60,7 +60,7 @@ def initialize_priority_queue(seen_cards, downloaded_cards):
 
     return download_next
 
-def process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, max_count=-1):
+def process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, failed_downloads, max_count=-1):
     processed_count = 0
     while download_next and (max_count <= 0 or processed_count < max_count):
         _, card_name = heapq.heappop(download_next)
@@ -71,6 +71,9 @@ def process_download_queue(download_next, seen_cards, downloaded_cards, seen_car
             continue
 
         card_details = download_card(card_name)
+        if not card_details:
+            failed_downloads.append(card_name)
+            continue
         for key in card_details.keys():
             formatted_name = format_card_name(key)
             if formatted_name not in seen_cards:
@@ -112,15 +115,18 @@ def main():
     downloaded_cards = load_cards(downloaded_cards_file)
 
     download_next = initialize_priority_queue(seen_cards, downloaded_cards)
+    failed_downloads = []  # Initialize the list to track failed downloads
     processed_count = 0
     try:
-        processed_count = process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, max_count=-1)
+        processed_count = process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, failed_downloads, max_count=-1)
     except KeyboardInterrupt:
         print("Process was interrupted by user.")
 
     print(f"{processed_count} cards processed.")
     print(f"Seen cards file size: {seen_cards_file.stat().st_size} bytes")
     print(f"Downloaded cards file size: {downloaded_cards_file.stat().st_size} bytes")
+    if failed_downloads:
+        print("Failed downloads:", failed_downloads)
 
 if __name__ == "__main__":
     main()

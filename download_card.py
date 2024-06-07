@@ -64,8 +64,7 @@ def download_card(card_name: str) -> dict:
                 backoff_time = min(1, backoff_time / 1.2)  # Shrink a little more slowly
                 return card_details
             else:
-                print(f"Failed to download card: {card_name}, Status Code: {response.status_code}")
-                return {}
+                raise requests.exceptions.RequestException(f"Failed to download card: {card_name}, Status Code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"Attempt {attempt + 1} failed: {e}")
             if attempt < max_retries - 1:
