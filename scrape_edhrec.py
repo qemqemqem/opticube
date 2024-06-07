@@ -81,6 +81,12 @@ def process_download_queue(download_next, seen_cards, downloaded_cards, seen_car
             seen_cards[formatted_name] += 1  # Increment the count for the seen card
             save_card_with_count(seen_cards_file, formatted_name, seen_cards[formatted_name])
 
+        if processed_count % 100 == 0:
+            print(f"Processed {processed_count} cards. Regenerating seen_cards.txt.")
+            with seen_cards_file.open('w') as f:
+                for card_name, count in sorted(seen_cards.items(), key=lambda item: item[1], reverse=True):
+                    f.write(f"{card_name},{count}\n")
+
         downloaded_cards.add(card_name)
         save_card(downloaded_cards_file, card_name)
 
