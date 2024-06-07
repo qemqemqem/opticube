@@ -2,7 +2,9 @@ import heapq
 from pathlib import Path
 import os
 from collections import deque, defaultdict
-import re
+
+from download_card import download_card
+from utils import format_card_name
 
 def initialize_files_and_directories():
     # Define file and directory paths
@@ -45,50 +47,66 @@ def save_card_with_count(file_path: Path, card_name: str, count: int) -> None:
         f.write(f"{card_name},{count}\n")
 
 # Placeholder function for downloading a card
-def download_card(card_name: str) -> None:
-    # TODO: Implement this function
-    pass
-
 # Function to format card names
-def format_card_name(card_name: str) -> str:
-    # Convert to lower case
-    card_name = card_name.lower()
-    # Replace non-alphanumeric characters with underscores
-    card_name = re.sub(r'\W+', '_', card_name)
-    # Remove leading/trailing underscores
-    card_name = card_name.strip('_')
-    return card_name
-
 def initialize_priority_queue(seen_cards, downloaded_cards):
     download_next = []
     for card, count in seen_cards.items():
         if card not in downloaded_cards:
             heapq.heappush(download_next, (-count, card))
+    
+    # If no cards are available, initialize with "Lightning Bolt"
+    if not download_next:
+        heapq.heappush(download_next, (-1, format_card_name("Lightning Bolt")))  # Default count as -1
+
     return download_next
 
-def process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir):
+def process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, max_count=-1):
     processed_count = 0
-    while download_next:
+    while download_next and (max_count <= 0 or processed_count < max_count):
         _, card_name = heapq.heappop(download_next)
+
+        print(f"Downloading card: {card_name}")
 
         if card_name in downloaded_cards:
             continue
 
-        download_card(card_name)
-        seen_cards[card_name] += 1
-        downloaded_cards.add(card_name)
+        card_details = download_card(card_name)
+        for key in card_details.keys():
+            formatted_name = format_card_name(key)
+            if formatted_name not in seen_cards:
+                seen_cards[formatted_name] = 0  # Initialize if not already seen
+            seen_cards[formatted_name] += 1  # Increment the count for the seen card
+            save_card_with_count(seen_cards_file, formatted_name, seen_cards[formatted_name])
 
-        save_card_with_count(seen_cards_file, card_name, seen_cards[card_name])
+        downloaded_cards.add(card_name)
         save_card(downloaded_cards_file, card_name)
 
         card_file = cards_dir / f"{card_name}.txt"
-        card_file.touch()
+        with card_file.open('w') as file:
+            for key, value in card_details.items():
+                file.write(f"{key}: {value}\n")
+
         processed_count += 1
+
+        download_next = initialize_priority_queue(seen_cards, downloaded_cards)
 
     return processed_count
 
+def reset_card_data(seen_cards_file: Path, downloaded_cards_file: Path, cards_dir: Path) -> None:
+    # Empty the seen_cards.txt and downloaded_cards.txt files
+    seen_cards_file.write_text('')
+    downloaded_cards_file.write_text('')
+
+    # Remove all files in the cards directory
+    for card_file in cards_dir.iterdir():
+        card_file.unlink()
+
+    print("Card data has been reset.")
+
 def main():
     seen_cards_file, downloaded_cards_file, cards_dir = initialize_files_and_directories()
+
+    # reset_card_data(seen_cards_file, downloaded_cards_file, cards_dir)  # WARNING DO NOT UNCOMMENT
 
     seen_cards = load_cards_with_counts(seen_cards_file)
     downloaded_cards = load_cards(downloaded_cards_file)
@@ -96,7 +114,7 @@ def main():
     download_next = initialize_priority_queue(seen_cards, downloaded_cards)
     processed_count = 0
     try:
-        processed_count = process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir)
+        processed_count = process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, max_count=-1)
     except KeyboardInterrupt:
         print("Process was interrupted by user.")
 

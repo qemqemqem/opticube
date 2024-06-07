@@ -1,0 +1,397 @@
+Stella Lee, Wild Card: 59.34% of 4127 decks 2449 decks
+Eris, Roar of the Storm: 17% of 11785 decks +15% synergy
+Alela, Cunning Conqueror: 69.00% of 7312 decks 5045 decks
+Tegwyll, Duke of Splendor: 67.89% of 1856 decks 1260 decks
+Sauron, Lord of the Rings: 14% of 39117 decks +13% synergy
+Alandra, Sky Dreamer: 63.70% of 1672 decks 1065 decks
+The Watcher in the Water: 63.56% of 1254 decks 797 decks
+Baral, Chief of Compliance: 62.54% of 3353 decks 2097 decks
+Heliod, the Radiant Dawn: 62.53% of 3221 decks 2014 decks
+Kami of the Crescent Moon: 60.57% of 1608 decks 974 decks
+Nekusar, the Mindrazer: 59.34% of 15668 decks 9297 decks
+Kwain, Itinerant Meddler: 58.69% of 4771 decks 2800 decks
+Minn, Wily Illusionist: 57.68% of 5099 decks 2941 decks
+Xyris, the Writhing Storm: 56.98% of 8108 decks 4620 decks
+Ian Malcolm, Chaotician: 56.64% of 1469 decks 832 decks
+Lord of the Nazgûl: 56.36% of 8054 decks 4539 decks
+The Council of Four: 55.30% of 3273 decks 1810 decks
+Millicent, Restless Revenant: 52.11% of 6310 decks 3288 decks
+Bria, Riptide Rogue: 96% of 711 decks +65% synergy
+Lumra, Bellow of the Woods: 74% of 290 decks +19% synergy
+Altaïr Ibn-La'Ahad: 69% of 111 decks +63% synergy
+Byrke, Long Ear of the Law: 54% of 39 decks +42% synergy
+Ezio, Blade of Vengeance: 34% of 529 decks +25% synergy
+Swords to Plowshares: 74% of 125997 decks +46% synergy
+Counterspell: 65% of 379779 decks +44% synergy
+Beast Within: 56% of 113978 decks +37% synergy
+Dovin's Veto: 40% of 125400 decks +35% synergy
+Blasphemous Act: 48% of 156462 decks +32% synergy
+Path to Exile: 51% of 125861 decks +31% synergy
+Leyline of the Guildpact: 33% of 2053 decks +31% synergy
+Farseek: 47% of 113982 decks +31% synergy
+Assassin's Trophy: 36% of 39686 decks +29% synergy
+Chaos Warp: 45% of 156463 decks +29% synergy
+Cultivate: 51% of 113980 decks +28% synergy
+Nature's Lore: 43% of 114042 decks +29% synergy
+Rampant Growth: 40% of 114041 decks +24% synergy
+Kodama's Reach: 40% of 113982 decks +24% synergy
+Negate: 37% of 379535 decks +26% synergy
+An Offer You Can't Refuse: 37% of 348225 decks +27% synergy
+Generous Gift: 36% of 125340 decks +24% synergy
+Cyclonic Rift: 35% of 379464 decks +21% synergy
+Relic of Sauron: 35% of 39117 decks +34% synergy
+Smothering Tithe: 35% of 125460 decks +23% synergy
+Birds of Paradise: 33% of 114042 decks +21% synergy
+Eternal Witness: 29% of 113982 decks +18% synergy
+Esper Sentinel: 23% of 123262 decks +14% synergy
+Storm-Kiln Artist: 21% of 153781 decks +16% synergy
+Sakura-Tribe Elder: 20% of 113982 decks +11% synergy
+Noble Hierarch: 20% of 41989 decks +18% synergy
+Faeburrow Elder: 19% of 41658 decks +17% synergy
+Psychic Frog: 19% of 1054 decks +16% synergy
+Orcish Bowmasters: 19% of 89685 decks +12% synergy
+Llanowar Elves: 18% of 114042 decks +8% synergy
+Saruman, the White Hand: 18% of 39117 decks +17% synergy
+Baleful Strix: 18% of 169268 decks +14% synergy
+Tatyova, Benthic Druid: 18% of 113746 decks +15% synergy
+Roaming Throne: 17% of 86644 decks +3% synergy
+Laughing Jasper Flint: 17% of 5238 decks +15% synergy
+Thunderclap Drake: 17% of 22740 decks +14% synergy
+Lotho, Corrupt Shirriff: 17% of 23372 decks +13% synergy
+Ignoble Hierarch: 17% of 17506 decks +14% synergy
+Felix Five-Boots: 16% of 2684 decks +15% synergy
+Seedborn Muse: 16% of 114024 decks +12% synergy
+Delighted Halfling: 16% of 54140 decks +9% synergy
+Elvish Mystic: 16% of 113949 decks +7% synergy
+Crackling Spellslinger: 15% of 11785 decks +14% synergy
+Avenger of Zendikar: 15% of 113981 decks +11% synergy
+Goblin Electromancer: 15% of 156441 decks +13% synergy
+Notion Thief: 15% of 169254 decks +13% synergy
+Moria Scavenger: 15% of 39120 decks +14% synergy
+Archmage Emeritus: 15% of 372843 decks +11% synergy
+Niv-Mizzet, Parun: 15% of 156151 decks +13% synergy
+Dockside Extortionist: 14% of 155888 decks +6% synergy
+Faerie Mastermind: 14% of 223350 decks +11% synergy
+Solemn Simulacrum: 14% of 379575 decks -0% synergy
+Reclamation Sage: 14% of 113917 decks +8% synergy
+Mauhúr, Uruk-hai Captain: 14% of 39120 decks +13% synergy
+Tireless Provisioner: 14% of 110074 decks +9% synergy
+Third Path Iconoclast: 14% of 110748 decks +12% synergy
+Guttersnipe: 14% of 156459 decks +10% synergy
+The Balrog of Moria: 13% of 39120 decks +13% synergy
+Doc Aurlock, Grizzled Genius: 13% of 7141 decks +10% synergy
+Kutzil, Malamet Exemplar: 13% of 10275 decks +8% synergy
+Scute Swarm: 13% of 112545 decks +9% synergy
+Avacyn's Pilgrim: 13% of 41980 decks +9% synergy
+Fyndhorn Elves: 13% of 114042 decks +6% synergy
+Lotus Cobra: 13% of 113981 decks +9% synergy
+Loran of the Third Path: 12% of 85745 decks +9% synergy
+Coiling Oracle: 12% of 113976 decks +10% synergy
+Azusa, Lost but Seeking: 12% of 113982 decks +8% synergy
+Nazgûl: 12% of 89685 decks +10% synergy
+Heroic Intervention: 34% of 113834 decks +20% synergy
+Brainstorm: 33% of 379779 decks +22% synergy
+Growth Spiral: 30% of 113609 decks +25% synergy
+Void Rend: 30% of 48840 decks +28% synergy
+Anguished Unmaking: 29% of 51965 decks +23% synergy
+Terminate: 24% of 70106 decks +19% synergy
+Teferi's Protection: 24% of 125654 decks +15% synergy
+Swan Song: 24% of 379441 decks +15% synergy
+Dark Ritual: 23% of 169466 decks +12% synergy
+Pongify: 23% of 379538 decks +17% synergy
+Stroke of Midnight: 22% of 44427 decks +15% synergy
+Frantic Search: 21% of 379738 decks +15% synergy
+Enlightened Tutor: 19% of 125992 decks +11% synergy
+Fierce Guardianship: 19% of 376649 decks +10% synergy
+Mystical Tutor: 19% of 379758 decks +11% synergy
+Mana Drain: 19% of 379779 decks +11% synergy
+Reality Shift: 18% of 379368 decks +13% synergy
+Nature's Claim: 18% of 113981 decks +13% synergy
+Vampiric Tutor: 18% of 169443 decks +8% synergy
+Rapid Hybridization: 18% of 379449 decks +13% synergy
+Boros Charm: 17% of 44352 decks +11% synergy
+Bedevil: 17% of 69883 decks +13% synergy
+Opt: 16% of 379728 decks +12% synergy
+Deflecting Swat: 15% of 155346 decks +8% synergy
+Final Showdown: 15% of 5159 decks +11% synergy
+Despark: 15% of 51824 decks +11% synergy
+Sink into Stupor: 14% of 3281 decks +9% synergy
+Worldly Tutor: 14% of 114041 decks +7% synergy
+Infernal Grasp: 14% of 164792 decks +9% synergy
+Atomize: 13% of 4756 decks +10% synergy
+Fact or Fiction: 12% of 379728 decks +9% synergy
+Harrow: 12% of 114039 decks +7% synergy
+Crop Rotation: 12% of 114036 decks +7% synergy
+Deadly Rollick: 12% of 168166 decks +7% synergy
+Consider: 12% of 366422 decks +9% synergy
+Eladamri's Call: 11% of 42040 decks +9% synergy
+Fell the Profane: 11% of 1404 decks +7% synergy
+Rakdos Charm: 11% of 70035 decks +8% synergy
+Krosan Grip: 11% of 113982 decks +7% synergy
+Big Score: 11% of 145150 decks +6% synergy
+Thrill of Possibility: 11% of 155827 decks +5% synergy
+Abrade: 11% of 156316 decks +5% synergy
+Drown in the Loch: 10% of 168661 decks +9% synergy
+Three Steps Ahead: 10% of 28682 decks +7% synergy
+Putrefy: 10% of 39769 decks +7% synergy
+Lightning Bolt: 10% of 156573 decks +5% synergy
+Flame of Anor: 10% of 79947 decks +9% synergy
+Resculpt: 10% of 372843 decks +7% synergy
+Force of Will: 10% of 379779 decks +4% synergy
+Return the Favor: 10% of 12950 decks +5% synergy
+Three Visits: 36% of 114036 decks +24% synergy
+Feed the Swarm: 29% of 167799 decks +20% synergy
+Windfall: 25% of 379742 decks +18% synergy
+Toxic Deluge: 24% of 169256 decks +16% synergy
+Faithless Looting: 24% of 156461 decks +15% synergy
+Vandalblast: 24% of 156459 decks +15% synergy
+Supreme Verdict: 23% of 125809 decks +20% synergy
+Demonic Tutor: 23% of 169466 decks +11% synergy
+Jeska's Will: 23% of 154666 decks +14% synergy
+Ponder: 22% of 379536 decks +15% synergy
+Damn: 22% of 50780 decks +18% synergy
+Farewell: 21% of 118517 decks +14% synergy
+Preordain: 20% of 379527 decks +14% synergy
+Reanimate: 19% of 169439 decks +12% synergy
+Elemental Eruption: 18% of 11785 decks +16% synergy
+Bala Ged Recovery: 14% of 112614 decks +10% synergy
+Approach of the Second Sun: 14% of 125688 decks +12% synergy
+Explore: 13% of 113981 decks +9% synergy
+Ringsight: 13% of 92173 decks +11% synergy
+Skyshroud Claim: 13% of 114035 decks +8% synergy
+Austere Command: 13% of 125861 decks +7% synergy
+Lock and Load: 13% of 22740 decks +10% synergy
+Villainous Wealth: 13% of 39751 decks +12% synergy
+Too Greedily, Too Deep: 13% of 39120 decks +12% synergy
+Pyretic Charge: 12% of 11785 decks +11% synergy
+Damnation: 12% of 169307 decks +7% synergy
+Expressive Iteration: 11% of 153763 decks +10% synergy
+Eerie Ultimatum: 11% of 20993 decks +9% synergy
+Ruinous Ultimatum: 11% of 19189 decks +9% synergy
+Flare of Cultivation: 10% of 1078 decks +4% synergy
+Insatiable Avarice: 10% of 10185 decks +4% synergy
+Mana Geyser: 10% of 156485 decks +6% synergy
+Gitaxian Probe: 9% of 379521 decks +6% synergy
+Treasure Cruise: 9% of 379390 decks +6% synergy
+Gamble: 9% of 156548 decks +4% synergy
+Solve the Equation: 9% of 373161 decks +6% synergy
+Time Wipe: 9% of 125387 decks +7% synergy
+Mizzix's Mastery: 9% of 156405 decks +7% synergy
+Tegwyll's Scouring: 9% of 60445 decks +8% synergy
+Tempt with Discovery: 8% of 113943 decks +7% synergy
+Culling Ritual: 8% of 38881 decks +6% synergy
+Serum Visions: 8% of 379547 decks +6% synergy
+Sea Gate Restoration: 8% of 375734 decks +5% synergy
+Wrath of God: 8% of 125997 decks +5% synergy
+Victimize: 8% of 169435 decks +2% synergy
+Wake the Dragon: 8% of 39120 decks +7% synergy
+Molten Psyche: 8% of 156479 decks +7% synergy
+Fabricate: 8% of 379547 decks +4% synergy
+Summons of Saruman: 7% of 79070 decks +7% synergy
+Whispering Madness: 7% of 169255 decks +7% synergy
+Lightning Greaves: 30% of 379575 decks +5% synergy
+Swiftfoot Boots: 29% of 379508 decks +1% synergy
+Haystack: 17% of 291 decks +9% synergy
+Wayfarer's Bauble: 15% of 379575 decks +4% synergy
+The One Ring: 11% of 218426 decks +2% synergy
+Skullclamp: 9% of 379575 decks -3% synergy
+Bident of Thassa: 8% of 379441 decks +5% synergy
+Conduit of Worlds: 8% of 70796 decks +5% synergy
+Hidden Blade: 8% of 1185 decks -2% synergy
+Lavaspur Boots: 8% of 22740 decks +2% synergy
+Sensei's Divining Top: 8% of 379575 decks +2% synergy
+Isochron Scepter: 8% of 379575 decks +5% synergy
+The Great Henge: 8% of 113390 decks +3% synergy
+Smoldering Stagecoach: 7% of 11785 decks +7% synergy
+Howling Mine: 7% of 379807 decks +5% synergy
+Bolas's Citadel: 7% of 168884 decks +1% synergy
+Ozolith, the Shattered Spire: 6% of 59309 decks +3% synergy
+Sapphire Medallion: 6% of 379776 decks +5% synergy
+The Key to the Vault: 6% of 22740 decks +2% synergy
+Thousand Moons Smithy: 6% of 29717 decks +4% synergy
+Fist of Suns: 6% of 16821 decks +5% synergy
+Sword of Wealth and Power: 6% of 22740 decks +1% synergy
+Ashnod's Altar: 6% of 379807 decks -2% synergy
+Mithril Coat: 6% of 185453 decks -1% synergy
+Rhystic Study: 33% of 379728 decks +19% synergy
+Annie Joins Up: 31% of 976 decks +26% synergy
+Whirlwind of Thought: 24% of 43932 decks +23% synergy
+Ghostly Prison: 24% of 125869 decks +19% synergy
+Mystic Remora: 22% of 379779 decks +13% synergy
+In the Darkness Bind Them: 18% of 39117 decks +17% synergy
+Propaganda: 17% of 379748 decks +12% synergy
+Temur Ascendancy: 16% of 41525 decks +14% synergy
+Rhythm of the Wild: 14% of 41411 decks +9% synergy
+Call of the Ring: 13% of 89685 decks +10% synergy
+Jeskai Ascendancy: 13% of 44335 decks +12% synergy
+Sylvan Library: 12% of 114042 decks +6% synergy
+Fiery Inscription: 12% of 79085 decks +10% synergy
+Exploration: 12% of 114037 decks +8% synergy
+Trouble in Pairs: 12% of 17854 decks +7% synergy
+Phyrexian Arena: 11% of 169427 decks +4% synergy
+Mirari's Wake: 11% of 42037 decks +8% synergy
+Teferi's Ageless Insight: 11% of 376108 decks +8% synergy
+Scurry of Gremlins: 11% of 485 decks +9% synergy
+Animate Dead: 11% of 169466 decks +6% synergy
+Garruk's Uprising: 10% of 112718 decks +4% synergy
+Black Market Connections: 10% of 146127 decks +5% synergy
+Warleader's Call: 10% of 5762 decks +7% synergy
+Wild Growth: 10% of 114042 decks +5% synergy
+Spiteful Visions: 10% of 70047 decks +9% synergy
+Impact Tremors: 9% of 156423 decks +5% synergy
+Kellan Joins Up: 9% of 2399 decks +8% synergy
+Sterling Grove: 9% of 42040 decks +7% synergy
+Wilderness Reclamation: 9% of 113615 decks +7% synergy
+On the Trail: 9% of 17541 decks +7% synergy
+Reconnaissance Mission: 8% of 376472 decks +6% synergy
+Vraska Joins Up: 8% of 3253 decks +6% synergy
+Spelunking: 8% of 32049 decks +6% synergy
+Kindred Discovery: 8% of 379062 decks +5% synergy
+Struggle for Project Purity: 8% of 38666 decks +5% synergy
+Wizard Class: 8% of 368970 decks +6% synergy
+Sanctum of All: 8% of 16629 decks +7% synergy
+Guardian Project: 8% of 113615 decks +3% synergy
+Darksteel Mutation: 8% of 125808 decks +5% synergy
+Rites of Flourishing: 7% of 113982 decks +6% synergy
+Phyrexian Tyranny: 7% of 70103 decks +7% synergy
+Brokers Ascendancy: 7% of 38600 decks +6% synergy
+Underworld Breach: 7% of 155578 decks +4% synergy
+Kenrith's Transformation: 7% of 113390 decks +4% synergy
+Hardened Scales: 7% of 113917 decks +3% synergy
+Sphere of Safety: 7% of 125825 decks +5% synergy
+Aura Shards: 7% of 42040 decks +5% synergy
+Fevered Visions: 7% of 156382 decks +6% synergy
+Burgeoning: 7% of 114038 decks +5% synergy
+Tribute to the World Tree: 7% of 61779 decks +2% synergy
+Narset, Parter of Veils: 8% of 378418 decks +5% synergy
+Tyvar, Jubilant Brawler: 8% of 24591 decks +6% synergy
+Oko, Thief of Crowns: 8% of 113403 decks +6% synergy
+Teferi, Time Raveler: 7% of 125387 decks +5% synergy
+Jace, Wielder of Mysteries: 6% of 378476 decks +5% synergy
+Saheeli, Sublime Artificer: 6% of 156023 decks +5% synergy
+Ral, Storm Conduit: 6% of 156028 decks +5% synergy
+Dihada, Binder of Wills: 6% of 14938 decks +5% synergy
+Ashiok, Dream Render: 5% of 168859 decks +4% synergy
+Reliquary Tower: 50% of 379563 decks +22% synergy
+Bojuka Bog: 37% of 169303 decks +21% synergy
+Mystic Sanctuary: 22% of 377884 decks +16% synergy
+Boseiju, Who Endures: 20% of 106241 decks +11% synergy
+Otawara, Soaring City: 19% of 357675 decks +10% synergy
+Rogue's Passage: 16% of 379492 decks -3% synergy
+The Black Gate: 14% of 89685 decks +12% synergy
+Takenuma, Abandoned Mire: 12% of 161612 decks +6% synergy
+Alchemist's Refuge: 11% of 113955 decks +9% synergy
+Barad-dûr: 10% of 89685 decks +8% synergy
+Minas Morgul, Dark Fortress: 10% of 43138 decks +8% synergy
+Rivendell: 9% of 182551 decks +6% synergy
+Eiganjo, Seat of the Empire: 9% of 119001 decks +5% synergy
+Temple of the False God: 9% of 379712 decks -1% synergy
+Ancient Tomb: 9% of 379776 decks -2% synergy
+Urborg, Tomb of Yawgmoth: 9% of 379566 decks -2% synergy
+Cabal Coffers: 8% of 169424 decks +2% synergy
+Kessig Wolf Run: 8% of 41544 decks +4% synergy
+Hall of Heliod's Generosity: 8% of 125348 decks +5% synergy
+Ancient Den: 8% of 125869 decks +5% synergy
+Desolate Lighthouse: 7% of 156443 decks +6% synergy
+Minas Tirith: 7% of 55478 decks +2% synergy
+Castle Vantress: 7% of 377884 decks +5% synergy
+Urza's Saga: 7% of 370382 decks -0% synergy
+Mosswort Bridge: 6% of 113982 decks +1% synergy
+Yavimaya, Cradle of Growth: 6% of 371337 decks -3% synergy
+Seat of the Synod: 6% of 379547 decks +3% synergy
+Academy Ruins: 6% of 379539 decks +3% synergy
+Mines of Moria: 6% of 82365 decks +3% synergy
+Geier Reach Sanitarium: 6% of 379303 decks +2% synergy
+Great Furnace: 6% of 156485 decks +3% synergy
+Lonely Sandbar: 5% of 379720 decks +3% synergy
+Shifting Woodland: 5% of 1408 decks +0% synergy
+Sol Ring: 90% of 379807 decks +5% synergy
+Arcane Signet: 83% of 377912 decks +12% synergy
+Dimir Signet: 48% of 169307 decks +40% synergy
+Talisman of Dominance: 47% of 169308 decks +40% synergy
+Izzet Signet: 46% of 156466 decks +40% synergy
+Talisman of Creativity: 46% of 155963 decks +39% synergy
+Azorius Signet: 44% of 125853 decks +38% synergy
+Rakdos Signet: 35% of 70048 decks +28% synergy
+Thought Vessel: 34% of 379340 decks +18% synergy
+Talisman of Progress: 33% of 125853 decks +29% synergy
+Fellwar Stone: 33% of 379807 decks +12% synergy
+Talisman of Indulgence: 33% of 70049 decks +27% synergy
+Talisman of Hierarchy: 29% of 51803 decks +24% synergy
+Orzhov Signet: 29% of 52025 decks +23% synergy
+Talisman of Conviction: 26% of 44195 decks +22% synergy
+Mind Stone: 25% of 379776 decks +6% synergy
+Boros Signet: 24% of 44361 decks +19% synergy
+Simic Signet: 21% of 113976 decks +17% synergy
+Commander's Sphere: 16% of 379406 decks -0% synergy
+Talisman of Curiosity: 16% of 113500 decks +13% synergy
+Timeless Lotus: 16% of 12687 decks +15% synergy
+Decanter of Endless Water: 13% of 319970 decks +7% synergy
+Chromatic Lantern: 11% of 379492 decks +1% synergy
+Midnight Clock: 10% of 377884 decks +7% synergy
+Mana Crypt: 9% of 379807 decks -2% synergy
+Gruul Signet: 9% of 41551 decks +6% synergy
+Forger's Foundry: 9% of 22740 decks +7% synergy
+Golgari Signet: 9% of 39769 decks +6% synergy
+Talisman of Resilience: 8% of 39621 decks +6% synergy
+Sky Diamond: 8% of 379758 decks +5% synergy
+Selesnya Signet: 7% of 41991 decks +5% synergy
+Talisman of Impulse: 7% of 41551 decks +6% synergy
+Misleading Signpost: 7% of 127175 decks +6% synergy
+Jeweled Lotus: 6% of 375204 decks -1% synergy
+Talisman of Unity: 6% of 41991 decks +5% synergy
+Everflowing Chalice: 6% of 379559 decks +1% synergy
+Thran Dynamo: 6% of 379764 decks +1% synergy
+Lotus Petal: 5% of 379776 decks -1% synergy
+Gilded Lotus: 5% of 379575 decks +2% synergy
+Mana Vault: 5% of 379807 decks -1% synergy
+Command Tower: 83% of 379508 decks +9% synergy
+Hallowed Fountain: 52% of 125853 decks +42% synergy
+Watery Grave: 50% of 169307 decks +39% synergy
+Breeding Pool: 49% of 113976 decks +40% synergy
+Sulfur Falls: 49% of 156444 decks +42% synergy
+Steam Vents: 49% of 156466 decks +40% synergy
+Crumbling Necropolis: 48% of 70044 decks +44% synergy
+Sunken Hollow: 47% of 169216 decks +39% synergy
+Overgrown Tomb: 47% of 39769 decks +38% synergy
+Temple Garden: 47% of 41991 decks +38% synergy
+Godless Shrine: 46% of 52025 decks +37% synergy
+Stomping Ground: 46% of 41551 decks +37% synergy
+Prairie Stream: 45% of 125741 decks +37% synergy
+Xander's Lounge: 44% of 66032 decks +41% synergy
+Spara's Headquarters: 44% of 38600 decks +40% synergy
+Exotic Orchard: 44% of 379563 decks +9% synergy
+Raffine's Tower: 43% of 48597 decks +39% synergy
+Blood Crypt: 43% of 70048 decks +34% synergy
+Ketria Triome: 43% of 41196 decks +39% synergy
+Drowned Catacomb: 42% of 169298 decks +36% synergy
+Zagoth Triome: 41% of 39413 decks +38% synergy
+Training Center: 41% of 154648 decks +35% synergy
+Sacred Foundry: 41% of 44361 decks +32% synergy
+Dragonskull Summit: 41% of 70047 decks +34% synergy
+The World Tree: 40% of 16547 decks +38% synergy
+Shivan Reef: 40% of 156525 decks +34% synergy
+Rejuvenating Springs: 40% of 112389 decks +34% synergy
+Sea of Clouds: 39% of 125551 decks +34% synergy
+Raugrin Triome: 38% of 43970 decks +35% synergy
+Glacial Fortress: 38% of 125844 decks +33% synergy
+Yavimaya Coast: 37% of 114028 decks +32% synergy
+Morphic Pool: 37% of 169046 decks +30% synergy
+Hinterland Harbor: 36% of 113956 decks +31% synergy
+Arcane Sanctum: 36% of 52015 decks +32% synergy
+Mystic Monastery: 34% of 44335 decks +31% synergy
+Smoldering Marsh: 33% of 70011 decks +26% synergy
+Shipwreck Marsh: 32% of 165226 decks +27% synergy
+Jetmir's Garden: 32% of 20519 decks +28% synergy
+Frontier Bivouac: 32% of 41525 decks +29% synergy
+Indatha Triome: 32% of 20982 decks +28% synergy
+Luxury Suite: 31% of 69932 decks +25% synergy
+Seaside Citadel: 30% of 41989 decks +27% synergy
+Underground River: 30% of 169458 decks +26% synergy
+Opulent Palace: 29% of 39751 decks +26% synergy
+Vault of Champions: 28% of 51349 decks +22% synergy
+Hedge Maze: 28% of 17541 decks +24% synergy
+Ziatora's Proving Ground: 28% of 16424 decks +24% synergy
+Cinder Glade: 27% of 41525 decks +19% synergy
+Dreamroot Cascade: 27% of 107811 decks +23% synergy
+Stormcarved Coast: 27% of 150370 decks +23% synergy
