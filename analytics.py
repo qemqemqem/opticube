@@ -40,5 +40,23 @@ def main():
     for card, col_sum in top_10_col_cards:
         print(f"{card}: {col_sum}")
 
+    # Calculate synergy symmetry
+    asymmetry_count = 0
+    total_difference = 0
+    count_difference = 0
+
+    for i in range(percentage_matrix.shape[0]):
+        for j in range(percentage_matrix.shape[1]):
+            if percentage_matrix[i, j] != 0 and percentage_matrix[j, i] == 0:
+                asymmetry_count += 1
+            elif percentage_matrix[i, j] != 0 and percentage_matrix[j, i] != 0:
+                total_difference += abs(percentage_matrix[i, j] - percentage_matrix[j, i])
+                count_difference += 1
+
+    average_difference = total_difference / count_difference if count_difference != 0 else 0
+
+    print(f"Asymmetry count (X,Y exists but Y,X does not): {asymmetry_count}")
+    print(f"Average difference where both entries exist: {average_difference}")
+
 if __name__ == "__main__":
     main()
