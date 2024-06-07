@@ -91,10 +91,9 @@ def process_download_queue(download_next, seen_cards, downloaded_cards, seen_car
 
         processed_count += 1
 
-        download_next = initialize_priority_queue(seen_cards, downloaded_cards)
+        download_next = [item for item in initialize_priority_queue(seen_cards, downloaded_cards) if item[1] not in failed_downloads]
 
     return processed_count
-
 def reset_card_data(seen_cards_file: Path, downloaded_cards_file: Path, cards_dir: Path) -> None:
     # Empty the seen_cards.txt and downloaded_cards.txt files
     seen_cards_file.write_text('')
@@ -126,7 +125,10 @@ def main():
     print(f"Seen cards file size: {seen_cards_file.stat().st_size} bytes")
     print(f"Downloaded cards file size: {downloaded_cards_file.stat().st_size} bytes")
     if failed_downloads:
-        print("Failed downloads:", failed_downloads)
+        with open('failed_downloads.txt', 'w') as f:
+            for failed_download in failed_downloads:
+                f.write(f"{failed_download}\n")
+        print("Failed downloads have been saved to failed_downloads.txt")
 
 if __name__ == "__main__":
     main()
