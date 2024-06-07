@@ -15,6 +15,12 @@ def main():
             card_name_to_id[card_name] = idx
     size = len(card_names)
 
+    # Save card_names and card_name_to_id to file
+    with open('card_names.pkl', 'wb') as f:
+        pickle.dump(card_names, f)
+    with open('card_name_to_id.pkl', 'wb') as f:
+        pickle.dump(card_name_to_id, f)
+
     # Create empty lil_matrices
     synergy_matrix = sp.lil_matrix((size, size))
     percentage_matrix = sp.lil_matrix((size, size))
