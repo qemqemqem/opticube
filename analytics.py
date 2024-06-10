@@ -31,7 +31,7 @@ def print_top_n(matrix, title, card_names, n=10):
     row_averages = np.array(row_averages).reshape(-1)
     top_n_row_indices = row_averages.argsort()[::-1][:n]
     top_n_row_cards = [(card_names[idx], row_averages[idx]) for idx in top_n_row_indices]
-    row_avg_bullets = [f"- **{card}:** `{row_avg}`" for card, row_avg in top_n_row_cards]
+    row_avg_bullets = [f"- **{card}:** `{row_avg:.2f}`" for card, row_avg in top_n_row_cards]
     console.print(Markdown("\n".join(row_avg_bullets)))
 
     console.print(Markdown(f"## Top {n} Cards by {title} Column Sum"))
@@ -51,24 +51,11 @@ def print_top_n(matrix, title, card_names, n=10):
     col_averages = np.array(col_averages).flatten()
     top_n_col_indices = col_averages.argsort()[::-1][:n]
     top_n_col_cards = [(card_names[idx], col_averages[idx]) for idx in top_n_col_indices]
-    col_avg_bullets = [f"- **{card}:** `{col_avg}`" for card, col_avg in top_n_col_cards]
+    col_avg_bullets = [f"- **{card}:** `{col_avg:.2f}`" for card, col_avg in top_n_col_cards]
     console.print(Markdown("\n".join(col_avg_bullets)))
-def analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id):
-    console.print(Markdown("# Loaded Matrices"))
-    console.print(Markdown(f"**Percentage Matrix Shape:** `{percentage_matrix.shape}` **Non-zero entries:** `{percentage_matrix.nnz}`"))
-    console.print(Markdown(f"**Synergy Matrix Shape:** `{synergy_matrix.shape}` **Non-zero entries:** `{synergy_matrix.nnz}`"))
-    console.print(Markdown(f"**Num Decks Matrix Shape:** `{num_decks_matrix.shape}` **Non-zero entries:** `{num_decks_matrix.nnz}`"))
 
-    # Ensure card_names is a list
-    assert isinstance(card_names, list), "card_names should be a list."
 
-    # Ensure card_name_to_id is a dictionary
-    assert isinstance(card_name_to_id, dict), "card_name_to_id should be a dictionary."
-
-    print_top_10(synergy_matrix, "Synergy Matrix", card_names)
-    # print_top_10(percentage_matrix, "Percentage Matrix", card_names)
-    # print_top_10(num_decks_matrix, "Num Decks Matrix", card_names)
-
+def analyze_synergy_symmetry(synergy_matrix, console):
     console.print(Markdown("## Synergy Symmetry Analysis"))
     # Calculate synergy symmetry
     sample_size = 10000
@@ -102,6 +89,30 @@ def analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_n
     console.print(Markdown(f"**Both zero count:** `{both_zero_count}`"))
     console.print(Markdown(f"**Both exist count:** `{both_exist_count}`"))
 
+def analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id):
+    console.print(Markdown("# Loaded Matrices"))
+    percentage_avg_non_zero = percentage_matrix.sum() / percentage_matrix.nnz if percentage_matrix.nnz != 0 else 0
+    console.print(Markdown(f"**Percentage Matrix:** Shape: `{percentage_matrix.shape}`, Non-zero entries: `{percentage_matrix.nnz}`, Average Non-zero Value: `{percentage_avg_non_zero:.2f}`"))
+
+    synergy_avg_non_zero = synergy_matrix.sum() / synergy_matrix.nnz if synergy_matrix.nnz != 0 else 0
+    console.print(Markdown(f"**Synergy Matrix:** Shape: `{synergy_matrix.shape}`, Non-zero entries: `{synergy_matrix.nnz}`, Average Non-zero Value: `{synergy_avg_non_zero:.2f}`"))
+
+    num_decks_avg_non_zero = num_decks_matrix.sum() / num_decks_matrix.nnz if num_decks_matrix.nnz != 0 else 0
+    console.print(Markdown(f"**Num Decks Matrix:** Shape: `{num_decks_matrix.shape}`, Non-zero entries: `{num_decks_matrix.nnz}`, Average Non-zero Value: `{num_decks_avg_non_zero:.2f}`"))
+
+    # Ensure card_names is a list
+    assert isinstance(card_names, list), "card_names should be a list."
+
+    # Ensure card_name_to_id is a dictionary
+    assert isinstance(card_name_to_id, dict), "card_name_to_id should be a dictionary."
+
+    n = 3
+    print_top_n(synergy_matrix, "Synergy Matrix", card_names, n=n)
+    print_top_n(percentage_matrix, "Percentage Matrix", card_names, n=n)
+    print_top_n(num_decks_matrix, "Num Decks Matrix", card_names, n=n)
+
+    analyze_synergy_symmetry(synergy_matrix, console)
+
 def main():
     percentage_matrix = load_percentage_matrix('percentage_matrix.pkl')
     synergy_matrix = load_percentage_matrix('synergy_matrix.pkl')
@@ -113,5 +124,6 @@ def main():
         card_name_to_id = pickle.load(f)
 
     analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id)
+
 if __name__ == "__main__":
     main()
