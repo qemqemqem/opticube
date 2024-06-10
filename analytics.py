@@ -27,24 +27,24 @@ def main():
     # Ensure card_name_to_id is a dictionary
     assert isinstance(card_name_to_id, dict), "card_name_to_id should be a dictionary."
 
-    console.print(Markdown("## Top 10 Cards by Row Sum"))
-    # Calculate row sums
-    row_sums = percentage_matrix.sum(axis=1)
-    row_sums = np.array(row_sums)
-    row_sums = row_sums.reshape(-1)
-    top_10_row_indices = row_sums.argsort()[::-1][:10]
-    top_10_row_cards = [(card_names[idx], row_sums[idx]) for idx in top_10_row_indices]
-    row_sum_bullets = [f"- **{card}:** `{row_sum}`" for card, row_sum in top_10_row_cards]
-    console.print(Markdown("\n".join(row_sum_bullets)))
+    console.print(Markdown("## Top 10 Cards by Row Average"))
+    # Calculate row averages
+    row_averages = percentage_matrix.mean(axis=1)
+    row_averages = np.array(row_averages)
+    row_averages = row_averages.reshape(-1)
+    top_10_row_indices = row_averages.argsort()[::-1][:10]
+    top_10_row_cards = [(card_names[idx], row_averages[idx]) for idx in top_10_row_indices]
+    row_avg_bullets = [f"- **{card}:** `{row_avg}`" for card, row_avg in top_10_row_cards]
+    console.print(Markdown("\n".join(row_avg_bullets)))
 
-    console.print(Markdown("## Top 10 Cards by Column Sum"))
-    # Calculate column sums
-    col_sums = percentage_matrix.sum(axis=0)
-    col_sums = np.array(col_sums).flatten()
-    top_10_col_indices = col_sums.argsort()[::-1][:10]
-    top_10_col_cards = [(card_names[idx], col_sums[idx]) for idx in top_10_col_indices]
-    col_sum_bullets = [f"- **{card}:** `{col_sum}`" for card, col_sum in top_10_col_cards]
-    console.print(Markdown("\n".join(col_sum_bullets)))
+    console.print(Markdown("## Top 10 Cards by Column Average"))
+    # Calculate column averages
+    col_averages = percentage_matrix.mean(axis=0)
+    col_averages = np.array(col_averages).flatten()
+    top_10_col_indices = col_averages.argsort()[::-1][:10]
+    top_10_col_cards = [(card_names[idx], col_averages[idx]) for idx in top_10_col_indices]
+    col_avg_bullets = [f"- **{card}:** `{col_avg}`" for card, col_avg in top_10_col_cards]
+    console.print(Markdown("\n".join(col_avg_bullets)))
 
     console.print(Markdown("## Synergy Symmetry Analysis"))
     # Calculate synergy symmetry
