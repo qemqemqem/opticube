@@ -1,3 +1,8 @@
+from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpBinary
+from pulp import *
+
+import cvxpy as cp
+import scipy.sparse as sp
 
 from tqdm import tqdm
 import pickle
@@ -115,6 +120,45 @@ def analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_n
 
     analyze_synergy_symmetry(synergy_matrix, console)
 
+def find_good_subset_optimized_quadratic(matrix, set_size):
+    # Error: cvxpy.error.SolverError: Problem is mixed-integer, but candidate QP/Conic solvers ([]) are not MIP-capable.
+
+    # Ensure the matrix is symmetric
+    if not (matrix != matrix.T).nnz == 0:  # Check if matrix is not symmetric
+        matrix = (matrix + matrix.T) / 2  # Symmetrize the matrix
+    n = matrix.shape[0]
+    x = cp.Variable(n, boolean=True)
+    objective = cp.Maximize(cp.quad_form(x, matrix))
+    constraints = [cp.sum(x) == set_size]
+    prob = cp.Problem(objective, constraints)
+    prob.solve(solver=cp.SCS)  # SCS is good for large-scale problems and supports sparse matrices
+    return x.value
+
+def find_good_subset_ilp(matrix, set_size):
+    console.print(Markdown("# Finding Good Subset using ILP"))
+    
+    n = matrix.shape[0]
+    prob = LpProblem("MaxSynergy", LpMaximize)
+    choices = LpVariable.dicts("Choice", range(n), 0, 1, LpBinary)
+
+    # Objective: We need to ensure that we're accessing matrix elements correctly and using them in a way that PuLP can handle.
+    # Convert matrix to a list of lists if it's a numpy array to avoid indexing issues.
+    if isinstance(matrix, np.ndarray):
+        matrix = matrix.tolist()
+
+    # Define the objective function
+    prob += lpSum(matrix[i, j] * choices[i] * choices[j] for i in range(n) for j in range(n))
+
+    # Constraint: Ensure the sum of choices equals the set size
+    prob += lpSum(choices[i] for i in range(n)) == set_size
+
+    # Solve the problem with a time limit
+    prob.solve(PULP_CBC_CMD(timeLimit=60))  # Set a time limit of 60 seconds
+
+    # Extract the solution
+    solution_indices = [i for i in range(n) if choices[i].varValue == 1]
+    return solution_indices
+
 def find_good_subset(matrix, card_names, card_name_to_id, set_size: int, num_tries: int):
     console.print(Markdown("# Finding Good Subset"))
     best_goodness = -1
@@ -151,7 +195,11 @@ def main():
 
     analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id)
 
-    find_good_subset(synergy_matrix, card_names, card_name_to_id, set_size=10, num_tries=10_000)
+    # find_good_subset(synergy_matrix, card_names, card_name_to_id, set_size=10, num_tries=1_000)
+
+    # find_good_subset_optimized_quadratic(synergy_matrix, set_size=10)
+
+    find_good_subset_ilp(synergy_matrix, set_size=10)
 
 if __name__ == "__main__":
     main()
