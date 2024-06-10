@@ -48,7 +48,7 @@ def main():
 
     console.print(Markdown("## Synergy Symmetry Analysis"))
     # Calculate synergy symmetry
-    sample_size = 100
+    sample_size = 10000
     rows, cols = percentage_matrix.shape
 
     # Generate random indices for rows and columns
@@ -58,18 +58,26 @@ def main():
     asymmetry_count = 0
     total_difference = 0
     count_difference = 0
+    both_zero_count = 0
+    both_exist_count = 0
 
     for i, j in zip(random_rows, random_cols):
         if percentage_matrix[i, j] != 0 and percentage_matrix[j, i] == 0:
             asymmetry_count += 1
+        elif percentage_matrix[i, j] == 0 and percentage_matrix[j, i] != 0:
+            asymmetry_count += 1
         elif percentage_matrix[i, j] != 0 and percentage_matrix[j, i] != 0:
             total_difference += abs(percentage_matrix[i, j] - percentage_matrix[j, i])
             count_difference += 1
-
+            both_exist_count += 1
+        elif percentage_matrix[i, j] == 0 and percentage_matrix[j, i] == 0:
+            both_zero_count += 1
     average_difference = total_difference / count_difference if count_difference != 0 else 0
 
     console.print(Markdown(f"**Asymmetry count (X,Y exists but Y,X does not):** `{asymmetry_count}`"))
     console.print(Markdown(f"**Average difference where both entries exist:** `{average_difference}`"))
+    console.print(Markdown(f"**Both zero count:** `{both_zero_count}`"))
+    console.print(Markdown(f"**Both exist count:** `{both_exist_count}`"))
 
 if __name__ == "__main__":
     main()
