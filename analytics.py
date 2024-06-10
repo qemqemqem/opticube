@@ -1,3 +1,5 @@
+
+from tqdm import tqdm
 import pickle
 import numpy as np
 from rich import print
@@ -113,6 +115,30 @@ def analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_n
 
     analyze_synergy_symmetry(synergy_matrix, console)
 
+def find_good_subset(matrix, card_names, card_name_to_id, set_size: int, num_tries: int):
+    console.print(Markdown("# Finding Good Subset"))
+    best_goodness = -1
+    best_subset = None
+
+    for _ in tqdm(range(num_tries), desc="Finding best subset"):
+        subset_indices = np.random.choice(matrix.shape[0], set_size, replace=False)
+        goodness = 0
+
+        for i in subset_indices:
+            for j in subset_indices:
+                if matrix[i, j] != 0:
+                    goodness += matrix[i, j]
+
+        if goodness > best_goodness:
+            best_goodness = goodness
+            best_subset = subset_indices
+
+    best_subset_names = [card_names[i] for i in best_subset]
+    best_subset_bullets = [f"- {name}" for name in best_subset_names]
+    console.print(Markdown("**Best subset card names:**\n" + "\n".join(best_subset_bullets)))
+
+    console.print(Markdown(f"**Goodness of best subset:** `{best_goodness}`"))
+
 def main():
     percentage_matrix = load_percentage_matrix('percentage_matrix.pkl')
     synergy_matrix = load_percentage_matrix('synergy_matrix.pkl')
@@ -124,6 +150,8 @@ def main():
         card_name_to_id = pickle.load(f)
 
     analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id)
+
+    find_good_subset(synergy_matrix, card_names, card_name_to_id, set_size=10, num_tries=10_000)
 
 if __name__ == "__main__":
     main()
