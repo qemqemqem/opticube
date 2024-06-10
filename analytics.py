@@ -48,17 +48,23 @@ def main():
 
     console.print(Markdown("## Synergy Symmetry Analysis"))
     # Calculate synergy symmetry
+    sample_size = 100
+    rows, cols = percentage_matrix.shape
+
+    # Generate random indices for rows and columns
+    random_rows = np.random.choice(rows, sample_size, replace=True)
+    random_cols = np.random.choice(cols, sample_size, replace=True)
+
     asymmetry_count = 0
     total_difference = 0
     count_difference = 0
 
-    for i in range(percentage_matrix.shape[0]):
-        for j in range(percentage_matrix.shape[1]):
-            if percentage_matrix[i, j] != 0 and percentage_matrix[j, i] == 0:
-                asymmetry_count += 1
-            elif percentage_matrix[i, j] != 0 and percentage_matrix[j, i] != 0:
-                total_difference += abs(percentage_matrix[i, j] - percentage_matrix[j, i])
-                count_difference += 1
+    for i, j in zip(random_rows, random_cols):
+        if percentage_matrix[i, j] != 0 and percentage_matrix[j, i] == 0:
+            asymmetry_count += 1
+        elif percentage_matrix[i, j] != 0 and percentage_matrix[j, i] != 0:
+            total_difference += abs(percentage_matrix[i, j] - percentage_matrix[j, i])
+            count_difference += 1
 
     average_difference = total_difference / count_difference if count_difference != 0 else 0
 
