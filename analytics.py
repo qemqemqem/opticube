@@ -11,6 +11,7 @@ from rich import print
 from rich.console import Console
 from rich.markdown import Markdown
 from scipy.sparse import issparse
+from scipy.sparse import csr_matrix
 
 console = Console(width=100, soft_wrap=True)
 
@@ -136,28 +137,55 @@ def find_good_subset_optimized_quadratic(matrix, set_size):
 
 def find_good_subset_ilp(matrix, set_size):
     console.print(Markdown("# Finding Good Subset using ILP"))
-    
+
+    print("Statistics about the matrix:")
+    print("Shape:", matrix.shape)
+    print("Number of non-zero entries:", matrix.nnz)
+    print("Average non-zero value:", matrix.sum() / matrix.nnz if matrix.nnz != 0 else 0)
+    print("Set size:", set_size)
+
     n = matrix.shape[0]
     prob = LpProblem("MaxSynergy", LpMaximize)
     choices = LpVariable.dicts("Choice", range(n), 0, 1, LpBinary)
 
-    # Objective: We need to ensure that we're accessing matrix elements correctly and using them in a way that PuLP can handle.
-    # Convert matrix to a list of lists if it's a numpy array to avoid indexing issues.
-    if isinstance(matrix, np.ndarray):
-        matrix = matrix.tolist()
+    # Convert the sparse matrix to COO format to iterate over non-zero entries
+    matrix_coo = matrix.tocoo()
 
-    # Define the objective function
-    prob += lpSum(matrix[i, j] * choices[i] * choices[j] for i in range(n) for j in range(n))
+    # Introduce new binary variables for the product terms
+    product_vars = {}
+    for k in range(len(matrix_coo.data)):
+        i, j = matrix_coo.row[k], matrix_coo.col[k]
+        if i <= j:  # Ensure each pair is only considered once
+            product_vars[(i, j)] = LpVariable(f"Product_{i}_{j}", 0, 1, LpBinary)
+
+    # Add constraints to set the product variables correctly
+    for (i, j), var in product_vars.items():
+        if i != j:
+            prob += var <= choices[i]
+            prob += var <= choices[j]
+            prob += var >= choices[i] + choices[j] - 1
+        else:
+            prob += var == choices[i]
+
+    # Define the objective function using the product variables
+    prob += lpSum(
+        matrix_coo.data[k] * product_vars[(matrix_coo.row[k], matrix_coo.col[k])] for k in range(len(matrix_coo.data))
+        if (matrix_coo.row[k], matrix_coo.col[k]) in product_vars)
 
     # Constraint: Ensure the sum of choices equals the set size
     prob += lpSum(choices[i] for i in range(n)) == set_size
 
-    # Solve the problem with a time limit
-    prob.solve(PULP_CBC_CMD(timeLimit=60))  # Set a time limit of 60 seconds
-
+    # Solve the problem with a time limit and enabling early exit for feasible solutions
+    solver = PULP_CBC_CMD(
+        timeLimit=10,
+        gapRel=0.05,  # Relative gap for early stopping
+        options=['maxSolutions 1', 'feasible']
+    )
+    prob.solve(solver)
     # Extract the solution
     solution_indices = [i for i in range(n) if choices[i].varValue == 1]
     return solution_indices
+
 
 def find_good_subset(matrix, card_names, card_name_to_id, set_size: int, num_tries: int):
     console.print(Markdown("# Finding Good Subset"))
@@ -183,15 +211,47 @@ def find_good_subset(matrix, card_names, card_name_to_id, set_size: int, num_tri
 
     console.print(Markdown(f"**Goodness of best subset:** `{best_goodness}`"))
 
+def reduce_matrix(matrix: np.ndarray, top_n: int) -> np.ndarray:
+    """
+    Reduce the size of the matrix to the top N most promising candidates based on the sum of non-zero entries.
+
+    Parameters:
+    matrix (np.ndarray): The original matrix.
+    top_n (int): The number of top candidates to retain.
+
+    Returns:
+    np.ndarray: The reduced matrix.
+    """
+    # Calculate the sum of non-zero entries for each row and column
+    row_sums = matrix.sum(axis=1).A1  # .A1 converts to 1D array
+    col_sums = matrix.sum(axis=0).A1  # .A1 converts to 1D array
+
+    # Combine row and column sums
+    total_sums = row_sums + col_sums
+
+    # Get the indices of the top N candidates
+    top_indices = np.argsort(total_sums)[-top_n:]
+
+    # Create the reduced matrix
+    reduced_matrix = matrix[np.ix_(top_indices, top_indices)]
+
+    return reduced_matrix
+
 def main():
     percentage_matrix = load_percentage_matrix('percentage_matrix.pkl')
     synergy_matrix = load_percentage_matrix('synergy_matrix.pkl')
     num_decks_matrix = load_percentage_matrix('num_decks_matrix.pkl')
 
+    set_size = 10
+
     with open('card_names.pkl', 'rb') as f:
         card_names = pickle.load(f)
     with open('card_name_to_id.pkl', 'rb') as f:
         card_name_to_id = pickle.load(f)
+
+    # Reduce the matrix with a heuristic
+    top_n = set_size * 10
+    reduced_matrix = reduce_matrix(synergy_matrix, top_n)
 
     analyze_matrices(percentage_matrix, synergy_matrix, num_decks_matrix, card_names, card_name_to_id)
 
@@ -199,7 +259,12 @@ def main():
 
     # find_good_subset_optimized_quadratic(synergy_matrix, set_size=10)
 
-    find_good_subset_ilp(synergy_matrix, set_size=10)
+    good_solution = find_good_subset_ilp(reduced_matrix, set_size=10)
+
+    # Print the names of the good solution
+    good_solution_names = [card_names[i] for i in good_solution]
+    good_solution_bullets = [f"- {name}" for name in good_solution_names]
+    console.print(Markdown("**Good solution card names:**\n" + "\n".join(good_solution_bullets)))
 
 if __name__ == "__main__":
     main()
