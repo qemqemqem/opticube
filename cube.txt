@@ -1,0 +1,10 @@
+Azorius Signet
+Boros Signet
+Dimir Signet
+Golgari Signet
+Gruul Signet
+Izzet Signet
+Orzhov Signet
+Rakdos Signet
+Selesnya Signet
+Simic Signet

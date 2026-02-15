@@ -92,6 +92,9 @@ def run_optimizer(
     lambda_curve: float = 0.0,
     seed: int = 42,
     card_metadata: str = 'data/card_metadata.json',
+    show_matrix: bool = False,
+    exclude_commander: bool = False,
+    output: str = None,
 ):
     """Run the optimizer (step 5)."""
     import pickle
@@ -102,6 +105,7 @@ def run_optimizer(
         load_pool_metadata,
         solve_cube,
         display_cube_results,
+        display_synergy_matrix,
         resolve_effort,
         _print_solver_report,
     )
@@ -139,7 +143,8 @@ def run_optimizer(
         card_names = pickle.load(f)
     console.print(f"  Card pool: {len(card_names)} cards (N={len(card_names)})")
 
-    pool_meta = load_pool_metadata(card_names, card_metadata)
+    pool_meta = load_pool_metadata(card_names, card_metadata,
+                                   exclude_commander=exclude_commander)
 
     lambdas = {
         'color': lambda_color,
@@ -170,6 +175,20 @@ def run_optimizer(
     display_cube_results(
         cube_indices, card_names, pool_meta, score, details, M_dense,
         lambdas, use_outer_log=use_outer_log)
+
+    if show_matrix:
+        display_synergy_matrix(cube_indices, card_names, pool_meta, M_dense)
+
+    if output:
+        names = []
+        for ci in cube_indices:
+            meta = pool_meta.get(ci, {})
+            names.append(meta.get('name', card_names[ci]))
+        names.sort()
+        with open(output, 'w') as f:
+            for name in names:
+                f.write(name + '\n')
+        print(f"\nWrote {len(names)} cards to {output}")
 
     return cube_indices, score
 
@@ -269,6 +288,18 @@ Examples:
         "--card-metadata", type=str, default="data/card_metadata.json",
         help="Path to card_metadata.json (default: data/card_metadata.json)"
     )
+    opt_group.add_argument(
+        "--show-matrix", action="store_true",
+        help="Print the full K×K pairwise synergy matrix (best for small K)"
+    )
+    opt_group.add_argument(
+        "--exclude-commander", action="store_true",
+        help="Exclude commander-specific cards (Command Tower, Arcane Signet, etc.)"
+    )
+    opt_group.add_argument(
+        "--output", "-o", type=str, default=None,
+        help="Write selected card names to a text file (one per line)"
+    )
 
     args = parser.parse_args()
 
@@ -312,6 +343,9 @@ Examples:
                 lambda_curve=args.lambda_curve,
                 seed=args.seed,
                 card_metadata=args.card_metadata,
+                show_matrix=args.show_matrix,
+                exclude_commander=args.exclude_commander,
+                output=args.output,
             )
 
         elapsed = time.time() - overall_start

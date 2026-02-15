@@ -845,16 +845,41 @@ def _cmc_bucket(cmc):
     return str(c)
 
 
-def load_pool_metadata(card_names, card_metadata_path='data/card_metadata.json'):
+def is_commander_specific(oracle_text):
+    """Return True if the card mechanically requires a commander to function.
+
+    Catches cards like Command Tower, Arcane Signet, Lieutenant cards,
+    Backgrounds, and eminence cards — but not cards that merely have
+    "Commander" in their name (e.g. Wintermoor Commander).
+    """
+    text = (oracle_text or '').lower()
+    patterns = [
+        "commander's color identity",   # Command Tower, Arcane Signet, etc.
+        "your commander",               # Lieutenant, commander tax, etc.
+        "control your commander",       # Lieutenant variant
+        "a commander you control",      # Bastion Protector, etc.
+        "command zone",                 # Eminence, Command Beacon, etc.
+        "choose a background",          # Background partner mechanic
+        "commander ninjutsu",           # Yuriko (doesn't work without commander)
+        "commander creatures you own",  # Background enchantments
+        "commanders you control",       # Codsworth, Falthis, etc.
+        "commander spells you cast",    # Flamekin Herald, etc.
+    ]
+    return any(p in text for p in patterns)
+
+
+def load_pool_metadata(card_names, card_metadata_path='data/card_metadata.json',
+                       exclude_commander=False):
     """
     Load card metadata indexed by pool position.
 
     Args:
         card_names: list of sanitized card name slugs
         card_metadata_path: path to card_metadata.json
+        exclude_commander: if True, flag commander-specific cards for exclusion
 
     Returns:
-        dict mapping card_index -> {color_identity, cmc, type_class, name}
+        dict mapping card_index -> {color_identity, cmc, type_class, name, ...}
     """
     meta_path = Path(card_metadata_path)
     with meta_path.open('r') as f:
@@ -867,20 +892,31 @@ def load_pool_metadata(card_names, card_metadata_path='data/card_metadata.json')
 
     pool_meta = {}
     matched = 0
+    excluded = 0
     for idx, name in enumerate(card_names):
         entry = meta_by_name.get(name)
         if entry is None:
             continue
         matched += 1
+
+        commander_only = is_commander_specific(entry.get('oracle_text', ''))
+        if exclude_commander and commander_only:
+            excluded += 1
+            continue
+
         pool_meta[idx] = {
             'color_identity': entry.get('color_identity', []),
             'cmc': entry.get('cmc', 0.0),
             'type_class': _classify_type(entry.get('type_line', '')),
             'type_line': entry.get('type_line', ''),
             'name': entry.get('name', name),
+            'commander_specific': commander_only,
         }
 
     console.print(f"  Matched {matched}/{len(card_names)} cards to metadata")
+    if exclude_commander:
+        console.print(f"  Excluded {excluded} commander-specific cards")
+
     return pool_meta
 
 
@@ -1036,6 +1072,14 @@ def find_best_cube_log_synergy(incoming_matrix, card_names, pool_meta, k,
     M = incoming_matrix.toarray() if sp.issparse(incoming_matrix) else np.array(incoming_matrix)
     np.fill_diagonal(M, 0)  # no self-synergy
 
+    # Forbidden mask: indices not in pool_meta are ineligible (e.g. excluded
+    # commander-specific cards, or cards missing metadata)
+    eligible = np.zeros(n, dtype=bool)
+    for idx in pool_meta:
+        eligible[idx] = True
+    forbidden = ~eligible
+    n_eligible = int(eligible.sum())
+
     # Precompute per-card property arrays for fast vectorized lookups
     # color_arr: dict of color -> bool array
     color_arr = {}
@@ -1068,7 +1112,7 @@ def find_best_cube_log_synergy(incoming_matrix, card_names, pool_meta, k,
 
     obj_label = "Log-Synergy" if use_outer_log else "Linear Synergy"
     console.print(Markdown(f"## {obj_label} Greedy + Local Search"))
-    console.print(f"  Pool: {n} cards, selecting {k}")
+    console.print(f"  Pool: {n_eligible} eligible cards (of {n} total), selecting {k}")
     console.print(f"  Objective: {'ln(1 + incoming)' if use_outer_log else 'sum(incoming)'}")
     console.print(f"  Restarts: {num_restarts}, max_no_improve: {max_no_improve}")
     console.print(f"  Lambdas: color={lambdas['color']}, type={lambdas['type']}, "
@@ -1078,6 +1122,8 @@ def find_best_cube_log_synergy(incoming_matrix, card_names, pool_meta, k,
 
     # Column sums = total incoming synergy per card (used for seeding)
     col_sums = M.sum(axis=0)
+    # Zero out forbidden cards so they're never seeded
+    col_sums[forbidden] = 0.0
 
     best_score = -np.inf
     best_cube = None
@@ -1091,7 +1137,8 @@ def find_best_cube_log_synergy(incoming_matrix, card_names, pool_meta, k,
         # ------------------------------------------------------------------
         # Phase 1: Greedy construction
         # ------------------------------------------------------------------
-        in_cube = np.zeros(n, dtype=bool)
+        # Start with forbidden cards already marked as unavailable
+        in_cube = forbidden.copy()
 
         if restart == 0:
             # First restart: seed with top incoming-synergy card
@@ -1401,6 +1448,58 @@ def display_cube_results(cube_indices, card_names, pool_meta, score, details,
     console.print(f"  Mana curve (nonland): {curve}")
 
 
+def display_synergy_matrix(cube_indices, card_names, pool_meta, M_dense):
+    """Print the full K×K pairwise synergy matrix for the selected cube.
+
+    Each cell shows the directed synergy M[row, col]: how much the row card
+    contributes to the column card's incoming synergy.
+
+    Best used for small K (≤ ~20).  For larger K the table gets unwieldy.
+    """
+    k = len(cube_indices)
+    idx = np.array(cube_indices)
+    sub = M_dense[np.ix_(idx, idx)]
+
+    # Build short display names (max 16 chars)
+    short_names = []
+    for ci in cube_indices:
+        meta = pool_meta.get(ci, {})
+        name = meta.get('name', card_names[ci])
+        if len(name) > 16:
+            name = name[:14] + '..'
+        short_names.append(name)
+
+    table = Table(title=f"Pairwise Synergy Matrix (K={k})", show_lines=True)
+    table.add_column("→ col / row ↓", style="bold", no_wrap=True)
+    for name in short_names:
+        table.add_column(name, justify="right", no_wrap=True)
+
+    for r in range(k):
+        row_vals = []
+        for c in range(k):
+            val = sub[r, c]
+            if r == c:
+                row_vals.append("[dim]—[/dim]")
+            elif val == 0:
+                row_vals.append("[dim]·[/dim]")
+            else:
+                row_vals.append(f"{val:.2f}")
+        table.add_row(short_names[r], *row_vals)
+
+    console.print()
+    console.print(table)
+    console.print()
+
+    # Quick stats
+    np.fill_diagonal(sub, 0)
+    total = sub.sum()
+    nnz = np.count_nonzero(sub)
+    possible = k * (k - 1)
+    console.print(f"  Total pairwise synergy: {total:.3f}")
+    console.print(f"  Non-zero pairs: {nnz}/{possible} "
+                  f"({100 * nnz / possible:.0f}% density)")
+
+
 # ---------------------------------------------------------------------------
 # Main pipeline (old linear objective)
 # ---------------------------------------------------------------------------
@@ -1600,6 +1699,14 @@ def main():
         '--spectral-clusters', type=int, default=0,
         help='Run spectral clustering with N clusters (0 = skip)',
     )
+    parser.add_argument(
+        '--show-matrix', action='store_true',
+        help='Print the full K×K pairwise synergy matrix (best for small K)',
+    )
+    parser.add_argument(
+        '--exclude-commander', action='store_true',
+        help='Exclude commander-specific cards (Command Tower, Arcane Signet, etc.)',
+    )
 
     # --- Solver effort / quality knobs ---
     parser.add_argument(
@@ -1651,7 +1758,8 @@ def main():
         console.print(f"  Card pool: {len(card_names)} cards")
 
         # Load metadata
-        pool_meta = load_pool_metadata(card_names, args.card_metadata)
+        pool_meta = load_pool_metadata(card_names, args.card_metadata,
+                                       exclude_commander=args.exclude_commander)
 
         lambdas = {
             'color': args.lambda_color,
@@ -1695,6 +1803,9 @@ def main():
         display_cube_results(
             cube_indices, card_names, pool_meta, score, details, M_dense,
             lambdas, use_outer_log=use_outer_log)
+
+        if args.show_matrix:
+            display_synergy_matrix(cube_indices, card_names, pool_meta, M_dense)
 
         return
 
