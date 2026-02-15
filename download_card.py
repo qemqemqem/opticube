@@ -1,79 +1,68 @@
-import requests
-import html2text
+"""
+Download a single card's synergy data from the EDHREC JSON API.
 
-import re
-from utils import format_card_name
+Uses the undocumented endpoint:
+    https://json.edhrec.com/pages/cards/{card-name}.json
 
-# Example output
-
-# [EDHREC]
-# ...
-# Utility_Lands
-# Mana_Artifacts
-# Lands
-# Top Commanders (13)
-# Saheeli, the Sun&#x27;s Brilliance
-# 8.16% of 1029 decks 84 decks
-# Dr. Madison Li
-# 5.72% of 2257 decks 129 decks
-# Urza, Chief Artificer
-# 5.00% of 11526 decks 576 decks
-
-
-def parse_card_details(markdown_text: str) -> dict:
-    """
-    Parses the markdown text to extract card details.
-    This is a basic parser and might need adjustments based on actual markdown structure.
-    
-    Args:
-    markdown_text (str): The markdown text of the card details.
-
-    Returns:
-    dict: A dictionary containing parsed details of the card.
-    """
-    lines = markdown_text.split('\n')
-    card_details = {}
-    previous_line = None  # To hold the potential card name
-
-    for line in lines:
-        if not line.strip():
-            continue
-        # Updated regex to match new potential format with synergy
-        if re.match(r'\d+(\.\d+)?%\s+of\s+\d+\s+decks(\s+\+\d+% synergy)?', line):
-            if previous_line:  # Ensure there is a previous line which is the card name
-                card_details[previous_line] = line
-        # elif "%" in line:
-        #     print("Surprise unhandled line!", line)
-        previous_line = line  # Update previous_line for the next iteration
-
-    return card_details
+Returns the raw JSON response as a Python dict.
+"""
 
 import time
 
-def download_card(card_name: str) -> dict:
-    url = f"https://edhrec.com/cards/{format_card_name(card_name)}"
-    backoff_time = 1  # Initial backoff time in seconds
-    max_retries = 5  # Maximum number of retries
+import requests
 
-    for attempt in range(max_retries):
+from utils import format_card_name
+
+EDHREC_JSON_URL = "https://json.edhrec.com/pages/cards/{card_name}.json"
+USER_AGENT = "Opticube/0.1 (personal noncommercial MTG cube optimizer)"
+MAX_RETRIES = 5
+
+
+def download_card(card_name: str) -> dict:
+    """
+    Download a single card's EDHREC JSON data.
+
+    Args:
+        card_name: The card name (will be formatted to a URL slug).
+
+    Returns:
+        The parsed JSON response as a dict, or {} on failure.
+    """
+    slug = format_card_name(card_name)
+    url = EDHREC_JSON_URL.format(card_name=slug)
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
+    backoff_time = 1
+
+    for attempt in range(MAX_RETRIES):
         try:
-            response = requests.get(url, timeout=10)  # Set a timeout for the request
+            response = requests.get(url, headers=headers, timeout=15)
             if response.status_code == 200:
-                text = html2text.html2text(response.text)
-                card_details = parse_card_details(text)
-                backoff_time = min(1, backoff_time / 1.2)  # Shrink a little more slowly
-                return card_details
+                return response.json()
+            elif response.status_code == 404:
+                print(f"  Card not found on EDHREC: {slug} (404)")
+                return {}
             else:
-                raise requests.exceptions.RequestException(f"Failed to download card: {card_name}, Status Code: {response.status_code}")
+                raise requests.exceptions.RequestException(
+                    f"HTTP {response.status_code} for {slug}"
+                )
         except requests.exceptions.RequestException as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
-            if attempt < max_retries - 1:
+            print(f"  Attempt {attempt + 1}/{MAX_RETRIES} failed: {e}")
+            if attempt < MAX_RETRIES - 1:
                 time.sleep(backoff_time)
-                backoff_time *= 2  # Exponential backoff
+                backoff_time *= 2
             else:
-                print(f"Failed to download card: {card_name} after {max_retries} attempts.")
+                print(f"  Failed to download {slug} after {MAX_RETRIES} attempts.")
                 return {}
 
+    return {}
+
+
 if __name__ == "__main__":
-    # Example usage
-    download_card("Simulacrum Synthesizer")
+    import json
+
+    data = download_card("Lightning Bolt")
+    if data:
+        print(json.dumps(data, indent=2)[:2000])
+        print(f"\n... (total keys: {list(data.keys())})")
+    else:
+        print("Download failed.")

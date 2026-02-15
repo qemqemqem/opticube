@@ -1,140 +1,214 @@
-import heapq
+"""
+Bulk download EDHREC synergy data using the JSON API.
+
+Reads the top N cards from seen_cards.txt (sorted by frequency), downloads
+each card's JSON data, and saves the raw response to cards_json/{card-name}.json.
+
+Features:
+- Resume capability: skips cards whose JSON file is fresh enough on disk
+- Staleness check: re-downloads files older than --max-age days
+- Configurable rate limiting (default: 1 request per second)
+- Progress tracking with ETA
+- Graceful Ctrl+C handling (data saved after each card is safe)
+
+Usage:
+    python scrape_edhrec.py --top 10 --delay 0.5    # Quick test run (10 cards)
+    python scrape_edhrec.py --top 100                # Small run
+    python scrape_edhrec.py --top 5000               # Full run (default)
+    python scrape_edhrec.py --max-age 3              # Re-download files older than 3 days
+    python scrape_edhrec.py --force                   # Re-download everything
+"""
+
+import argparse
+import json
+import time
 from pathlib import Path
-import os
-from collections import deque, defaultdict
 
 from download_card import download_card
 from utils import format_card_name
 
-def initialize_files_and_directories():
-    # Define file and directory paths
-    seen_cards_file = Path('seen_cards.txt')
-    downloaded_cards_file = Path('downloaded_cards.txt')
-    cards_dir = Path('cards')
+CARDS_JSON_DIR = Path("cards_json")
+SEEN_CARDS_FILE = Path("seen_cards.txt")
+FAILED_DOWNLOADS_FILE = Path("failed_downloads.txt")
 
-    # Ensure the cards directory exists
-    cards_dir.mkdir(exist_ok=True)
-
-    # Create the files if they don't exist
-    seen_cards_file.touch(exist_ok=True)
-    downloaded_cards_file.touch(exist_ok=True)
-
-    return seen_cards_file, downloaded_cards_file, cards_dir
-
-# Function to load cards from a file into a set
-def load_cards(file_path: Path) -> set:
-    with file_path.open('r') as f:
-        return set(line.strip() for line in f)
-
-# Function to save a card to a file
-def save_card(file_path: Path, card_name: str) -> None:
-    with file_path.open('a') as f:
-        f.write(f"{card_name}\n")
+DEFAULT_TOP_N = 5000
+DEFAULT_DELAY = 1.0  # seconds between requests
+DEFAULT_MAX_AGE_DAYS = 14  # re-download cards older than this
 
 
-# Function to load cards from a file into a dictionary with counts
-def load_cards_with_counts(file_path: Path) -> defaultdict:
-    cards_with_counts = defaultdict(int)  # default value of int is 0
-    with file_path.open('r') as f:
+def file_age_days(path: Path) -> float:
+    """Return how many days old a file is based on its mtime."""
+    age_seconds = time.time() - path.stat().st_mtime
+    return age_seconds / 86400
+
+
+def load_top_cards(seen_cards_path: Path, top_n: int) -> list[tuple[str, int]]:
+    """
+    Load the top N cards from seen_cards.txt, sorted by frequency (descending).
+
+    Deduplicates by card name, keeping the highest count for each card.
+    Returns a list of (card_name, count) tuples.
+    """
+    card_counts: dict[str, int] = {}
+    with seen_cards_path.open("r") as f:
         for line in f:
-            card_name, count = line.strip().split(',')
-            cards_with_counts[card_name] = int(count)
-    return cards_with_counts
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split(",")
+            if len(parts) != 2:
+                continue
+            card_name = parts[0].strip()
+            count = int(parts[1].strip())
+            # Keep the highest count for each card
+            if card_name not in card_counts or count > card_counts[card_name]:
+                card_counts[card_name] = count
 
-# Function to save a card with count to a file
-def save_card_with_count(file_path: Path, card_name: str, count: int) -> None:
-    with file_path.open('a') as f:
-        f.write(f"{card_name},{count}\n")
+    cards = sorted(card_counts.items(), key=lambda x: x[1], reverse=True)
+    return cards[:top_n]
 
-# Placeholder function for downloading a card
-# Function to format card names
-def initialize_priority_queue(seen_cards, downloaded_cards):
-    download_next = []
-    for card, count in seen_cards.items():
-        if card not in downloaded_cards:
-            heapq.heappush(download_next, (-count, card))
-    
-    # If no cards are available, initialize with "Lightning Bolt"
-    if not download_next:
-        heapq.heappush(download_next, (-1, format_card_name("Lightning Bolt")))  # Default count as -1
 
-    return download_next
+def is_fresh(card_name: str, max_age_days: float) -> bool:
+    """Check if a card's JSON file exists on disk and is fresh enough."""
+    path = CARDS_JSON_DIR / f"{card_name}.json"
+    if not path.exists():
+        return False
+    if path.stat().st_size == 0:
+        return False  # empty files are invalid
+    return file_age_days(path) < max_age_days
 
-def process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, failed_downloads, max_count=-1):
-    processed_count = 0
-    while download_next and (max_count <= 0 or processed_count < max_count):
-        _, card_name = heapq.heappop(download_next)
 
-        print(f"Downloading card: {card_name}")
+def download_all(top_n: int, delay: float, max_age_days: float, force: bool = False):
+    """Download the top N cards from EDHREC's JSON API."""
+    CARDS_JSON_DIR.mkdir(parents=True, exist_ok=True)
 
-        if card_name in downloaded_cards:
-            continue
+    if not SEEN_CARDS_FILE.exists():
+        print(f"ERROR: {SEEN_CARDS_FILE} not found. Cannot determine which cards to download.")
+        return
 
-        card_details = download_card(card_name)
-        if not card_details:
+    # Load the card list
+    cards = load_top_cards(SEEN_CARDS_FILE, top_n)
+    print(f"Loaded {len(cards)} cards from {SEEN_CARDS_FILE} (top {top_n} by frequency)")
+
+    if not cards:
+        print("No cards to download.")
+        return
+
+    # Determine which cards need downloading
+    if force:
+        to_download = cards
+        fresh_count = 0
+        stale_count = 0
+    else:
+        to_download = []
+        fresh_count = 0
+        stale_count = 0
+        for name, count in cards:
+            path = CARDS_JSON_DIR / f"{name}.json"
+            if not path.exists() or path.stat().st_size == 0:
+                to_download.append((name, count))
+            elif file_age_days(path) >= max_age_days:
+                to_download.append((name, count))
+                stale_count += 1
+            else:
+                fresh_count += 1
+
+    print(f"Fresh (reusing): {fresh_count}")
+    if stale_count > 0:
+        print(f"Stale (>= {max_age_days:.0f}d, re-downloading): {stale_count}")
+    print(f"Missing: {len(to_download) - stale_count}")
+    print(f"Total to download: {len(to_download)}")
+
+    if not to_download:
+        print("All cards are fresh! Nothing to download.")
+        return
+
+    # Estimate time
+    est_minutes = len(to_download) * delay / 60
+    print(f"Estimated time: {est_minutes:.0f} minutes ({est_minutes/60:.1f} hours) at {delay}s delay")
+    print()
+
+    failed_downloads = []
+    downloaded_count = 0
+    start_time = time.time()
+
+    for i, (card_name, freq) in enumerate(to_download):
+        elapsed = time.time() - start_time
+        if downloaded_count > 0:
+            rate = downloaded_count / elapsed
+            remaining = (len(to_download) - i) / rate
+            eta_str = f"ETA: {remaining/60:.0f}m"
+        else:
+            eta_str = "ETA: calculating..."
+
+        print(f"[{i+1}/{len(to_download)}] Downloading: {card_name} (freq: {freq}) {eta_str}")
+
+        data = download_card(card_name)
+
+        if not data:
             failed_downloads.append(card_name)
-            continue
-        for key in card_details.keys():
-            formatted_name = format_card_name(key)
-            if formatted_name not in seen_cards:
-                seen_cards[formatted_name] = 0  # Initialize if not already seen
-            seen_cards[formatted_name] += 1  # Increment the count for the seen card
-            save_card_with_count(seen_cards_file, formatted_name, seen_cards[formatted_name])
+            print(f"  FAILED: {card_name}")
+        else:
+            # Save raw JSON
+            output_path = CARDS_JSON_DIR / f"{card_name}.json"
+            with output_path.open("w") as f:
+                json.dump(data, f)
+            downloaded_count += 1
 
-        if processed_count % 100 == 0:
-            print(f"Processed {processed_count} cards. Regenerating seen_cards.txt.")
-            with seen_cards_file.open('w') as f:
-                for card_name, count in sorted(seen_cards.items(), key=lambda item: item[1], reverse=True):
-                    f.write(f"{card_name},{count}\n")
+        # Rate limit (skip delay on last card)
+        if i < len(to_download) - 1:
+            time.sleep(delay)
 
-        downloaded_cards.add(card_name)
-        save_card(downloaded_cards_file, card_name)
+    # Summary
+    elapsed_total = time.time() - start_time
+    print()
+    print(f"Download complete!")
+    print(f"  Downloaded: {downloaded_count}")
+    print(f"  Failed: {len(failed_downloads)}")
+    print(f"  Total time: {elapsed_total/60:.1f} minutes")
 
-        card_file = cards_dir / f"{card_name}.txt"
-        with card_file.open('w') as file:
-            for key, value in card_details.items():
-                file.write(f"{key}: {value}\n")
+    # Save failed downloads
+    if failed_downloads:
+        with FAILED_DOWNLOADS_FILE.open("w") as f:
+            for name in failed_downloads:
+                f.write(f"{name}\n")
+        print(f"  Failed downloads saved to {FAILED_DOWNLOADS_FILE}")
 
-        processed_count += 1
-
-        download_next = [item for item in initialize_priority_queue(seen_cards, downloaded_cards) if item[1] not in failed_downloads]
-
-    return processed_count
-def reset_card_data(seen_cards_file: Path, downloaded_cards_file: Path, cards_dir: Path) -> None:
-    # Empty the seen_cards.txt and downloaded_cards.txt files
-    seen_cards_file.write_text('')
-    downloaded_cards_file.write_text('')
-
-    # Remove all files in the cards directory
-    for card_file in cards_dir.iterdir():
-        card_file.unlink()
-
-    print("Card data has been reset.")
 
 def main():
-    seen_cards_file, downloaded_cards_file, cards_dir = initialize_files_and_directories()
+    parser = argparse.ArgumentParser(description="Download EDHREC card synergy data (JSON API)")
+    parser.add_argument(
+        "--top", type=int, default=DEFAULT_TOP_N,
+        help=f"Number of top cards to download (default: {DEFAULT_TOP_N})"
+    )
+    parser.add_argument(
+        "--delay", type=float, default=DEFAULT_DELAY,
+        help=f"Delay between requests in seconds (default: {DEFAULT_DELAY})"
+    )
+    parser.add_argument(
+        "--max-age", type=float, default=DEFAULT_MAX_AGE_DAYS,
+        help=f"Max age in days before re-downloading a card (default: {DEFAULT_MAX_AGE_DAYS})"
+    )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Force re-download of all cards, ignoring local cache"
+    )
+    args = parser.parse_args()
 
-    # reset_card_data(seen_cards_file, downloaded_cards_file, cards_dir)  # WARNING DO NOT UNCOMMENT
+    print(f"=== EDHREC JSON Scraper ===")
+    print(f"Top N: {args.top}")
+    print(f"Delay: {args.delay}s")
+    print(f"Max age: {args.max_age}d")
+    if args.force:
+        print(f"FORCE: re-downloading everything")
+    print()
 
-    seen_cards = load_cards_with_counts(seen_cards_file)
-    downloaded_cards = load_cards(downloaded_cards_file)
-
-    download_next = initialize_priority_queue(seen_cards, downloaded_cards)
-    failed_downloads = []  # Initialize the list to track failed downloads
-    processed_count = 0
     try:
-        processed_count = process_download_queue(download_next, seen_cards, downloaded_cards, seen_cards_file, downloaded_cards_file, cards_dir, failed_downloads, max_count=-1)
+        download_all(args.top, args.delay, args.max_age, args.force)
     except KeyboardInterrupt:
-        print("Process was interrupted by user.")
+        print("\n\nInterrupted by user. Data saved so far is safe.")
+        print("Re-run to resume from where you left off.")
 
-    print(f"{processed_count} cards processed.")
-    print(f"Seen cards file size: {seen_cards_file.stat().st_size} bytes")
-    print(f"Downloaded cards file size: {downloaded_cards_file.stat().st_size} bytes")
-    if failed_downloads:
-        with open('failed_downloads.txt', 'w') as f:
-            for failed_download in failed_downloads:
-                f.write(f"{failed_download}\n")
-        print("Failed downloads have been saved to failed_downloads.txt")
 
 if __name__ == "__main__":
     main()
